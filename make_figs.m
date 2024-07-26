@@ -56,7 +56,7 @@ a_text=text(t_oni(1)-4000,12,'(a)','FontName','Helvetica', 'FontSize',18,'Interp
 b_text=text(t_sat(1)+550,11.5,'(b): ERA5','FontName','Helvetica', 'FontSize',18,'Interpreter', 'latex');
 c_text=text(t_sat(1)+550,3.25,'(c): NOAA OI v2','FontName','Helvetica', 'FontSize',18,'Interpreter', 'latex');
 
-
+saveas(gcf,'figures/fig1','epsc')
 
 
 %% Fig 2
@@ -130,7 +130,7 @@ ylabel('$H_{WE}$','Interpreter', 'latex')
 a_text=text(t_oni(1)-3500,.95,'(c)','FontName','Helvetica', 'FontSize',18,'Interpreter', 'latex');
 b_text=text(t_oni(1)-3500,.7,'(d)','FontName','Helvetica', 'FontSize',18,'Interpreter', 'latex');
 
-
+saveas(gcf,'figures/fig2','epsc')
 
 %% Fig 3
 sat_ver_lag_8=readmatrix('final_ts/elnino_NOAA_monthly_anom_ver_L4_lag_8.csv');
@@ -246,6 +246,8 @@ xlabel('years','Interpreter', 'latex')
 ylabel('$H_{WE}$','Interpreter', 'latex')
 a_text=text(t_oni(1)-3500,1.6,'(c)','FontName','Helvetica', 'FontSize',18,'Interpreter', 'latex');
 b_text=text(t_oni(1)-3500,.99,'(d)','FontName','Helvetica', 'FontSize',18,'Interpreter', 'latex');
+
+saveas(gcf,'figures/fig3','epsc')
 
 %% Fig. 4
 
@@ -457,3 +459,5 @@ set(gca,'FontSize',18)
 
 xlabel(tl,'years','interpreter','latex','FontSize',18)
 
+
+saveas(gcf,'figures/fig4','epsc')
