@@ -7,7 +7,7 @@ spe_analysis.py: Loads the data, calculates the anomaly, extracts the Spatial Pe
 
 spe_utils.py: Utilities for SPE analysis.
 
-Study:trend.py: Script for significance test of signals' trends.
+study_trend.py: Script for significance test of signals' trends.
 
 make_figs.m: Matlab scrip for figures.
 
