@@ -41,6 +41,24 @@ def v_entropy(data,L,lag):
     
     return entropy(probabilities(np.array(code).reshape(1,np.size(code))[0],L))/np.log(math.factorial(L))
 
+def h_code(data,L,lag):
+    
+    code=[]
+    for i in range(len(data[:,0])):
+        code.append(perm_indices(data[i,:],L,lag))
+    #print(len(np.array(code).reshape(1,np.size(code))[0]))
+    return np.array(code).reshape(1,np.size(code))[0]
+
+def v_code(data,L,lag):
+    
+    code=[]
+    for i in range(len(data[0,:])):
+        code.append(perm_indices(data[:,i],L,lag))
+    #print(len(np.array(code).reshape(1,np.size(code))[0]))
+    return np.array(code).reshape(1,np.size(code))[0]
+
+
+
 def perm_indices(ts, wl, lag):
     m = len(ts) - (wl - 1)*lag
     indcs = np.zeros(m, dtype=int)
