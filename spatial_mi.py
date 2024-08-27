@@ -132,7 +132,7 @@ elif region == '3':
     )
 elif region == '4':
     dataset=netCDF4.Dataset(
-        "/Users/juan/Downloads/oisst_v2_mean_monthly_0.12--150E_-5-5N_1981-2024_0--150E_-4.88-4.88N_1981-2024_160-209.88E_-4.88-4.88N_1981-2024.nc"
+        "input_data/oisst_v2_mean_monthly_0.12--150E_-5-5N_1981-2024_0--150E_-4.88-4.88N_1981-2024_160-209.88E_-4.88-4.88N_1981-2024.nc"
     )
 
 lat_sat = dataset["lat"][:][::-1] #For some reason the data comes N-S inverted
@@ -171,10 +171,10 @@ elif region == '3':
 
 elif region == '4':
     dataset=netCDF4.Dataset(
-        "/Users/juan/Downloads/adaptor.mars.internal-1724686270.1487467-12125-1-cca537d8-9827-4324-92ce-3f95fb19035c.nc"
+        "input_data/adaptor.mars.internal-1724686270.1487467-12125-1-cca537d8-9827-4324-92ce-3f95fb19035c.nc"
     )
     dataset2=netCDF4.Dataset(
-        "/Users/juan/Downloads/adaptor.mars.internal-1724745632.9268458-3371-18-14c0ba75-67c9-4043-ac8b-58a389fae2e9.nc"
+        "input_data/adaptor.mars.internal-1724745632.9268458-3371-18-14c0ba75-67c9-4043-ac8b-58a389fae2e9.nc"
     )
     lon_era=np.concatenate((dataset["longitude"][:]-360,dataset2["longitude"][:]))
     sst = dataset["sst"][:]
@@ -207,8 +207,8 @@ obj.code = code
 mi = obj.mutal_info()
 
 plt.plot(time_era,mi)
-
+'''
 if code == 'vertical':  
     np.savetxt('mi_ts/elnino_anom_MI_ver_L'+str(L)+'_lag_'+str(lag)+'_region_'+region+'.csv',mi, delimiter=",")
 elif code == 'horizontal':
-    np.savetxt('mi_ts/elnino_anom_MI_hor_L'+str(L)+'_lag_'+str(lag)+'_region_'+region+'.csv',mi, delimiter=",")
+    np.savetxt('mi_ts/elnino_anom_MI_hor_L'+str(L)+'_lag_'+str(lag)+'_region_'+region+'.csv',mi, delimiter=",")'''
