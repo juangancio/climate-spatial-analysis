@@ -36,15 +36,22 @@ class mi_obj:
         #self.lon = int(np.size(data[0])/len(data[0]))
         self.data1=data1
         self.data2=data2
+        self.code = 'horizontal'
         #self.data=data.reshape(len(data),self.lat*self.lon,1)
         #self.data=self.data[:,:,0]
 
     def aux_fun(self,i):
        
-        var1=h_code(self.data1[i,:,:],self.L,self.lag)
+        if self.code == 'horizontal': 
+            var1=h_code(self.data1[i,:,:],self.L,self.lag)
+            var2=h_code(self.data2[i,:,:],self.L,self.lag)
+        elif self.code == 'vertical':
+            var1=v_code(self.data1[i,:,:],self.L,self.lag)
+            var2=v_code(self.data2[i,:,:],self.L,self.lag)
+        else:
+            raise Exception("Specified code is not valid, try 'vertical', or 'horizontal'.")
+
         h1=entropy(probabilities(var1,math.factorial(self.L)))
-        
-        var2=h_code(self.data2[i,:,:],self.L,self.lag)
         h2=entropy(probabilities(var2,math.factorial(self.L)))
         joint=[var1[i]+(var2[i]-1)*math.factorial(self.L) for i in range(len(var1))]
     
@@ -103,8 +110,14 @@ def usual_entropy(data,b):
     pk=np.histogram(data,bins=b,density=True)
     return scipy.stats.entropy(pk[0])/np.log(b)
 
+#####################################################################################
+L=4
+lag=8
 
-region = '34'
+region = '4' # '3' / '4' / '34'
+code = 'horizontal' # 'vertical' / 'horizontal'
+
+#####################################################################################
 
 if region == '34':
     dataset=netCDF4.Dataset(
@@ -112,6 +125,16 @@ if region == '34':
         #"/Users/juan/Downloads/oisst_v2_mean_monthly_0.12--150E_-5-5N_1981-2024_0--150E_-4.88-4.88N_1981-2024_160-209.88E_-4.88-4.88N_1981-2024.nc"
         #"/Volumes/T7/climate_data/oisst_v2_anom_monthly_-170-120E_-5-5N_-170--120E_-5-5N.nc"
         )
+    
+elif region == '3':
+    dataset=netCDF4.Dataset(
+        "input_data/oisst_v2_mean_monthly_-150--90E_-5-5N.nc"
+    )
+elif region == '4':
+    dataset=netCDF4.Dataset(
+        "/Users/juan/Downloads/oisst_v2_mean_monthly_0.12--150E_-5-5N_1981-2024_0--150E_-4.88-4.88N_1981-2024_160-209.88E_-4.88-4.88N_1981-2024.nc"
+    )
+
 lat_sat = dataset["lat"][:][::-1] #For some reason the data comes N-S inverted
 lon_sat = dataset["lon"][:]
 time_sat = dataset["time"][:]
@@ -133,10 +156,38 @@ if region == '34':
         #"/Volumes/T7/climate_data/adaptor.mars.internal-1716106111.9322994-1587-14-4a59a5e2-b6ae-4d38-a377-800bb134c4e8.nc"
         )
 
+    lon_era = dataset["longitude"][:]
+    sst = dataset["sst"][:]
+    sst=sst.data[500:1011,0,:,:]
+
+elif region == '3':
+    dataset=netCDF4.Dataset(
+        "input_data/ERA5_mean_monthly_elnino3.nc"
+    )
+    
+    lon_era = dataset["longitude"][:]
+    sst = dataset["sst"][:]
+    sst=sst.data[500:1011,0,:,:]
+
+elif region == '4':
+    dataset=netCDF4.Dataset(
+        "/Users/juan/Downloads/adaptor.mars.internal-1724686270.1487467-12125-1-cca537d8-9827-4324-92ce-3f95fb19035c.nc"
+    )
+    dataset2=netCDF4.Dataset(
+        "/Users/juan/Downloads/adaptor.mars.internal-1724745632.9268458-3371-18-14c0ba75-67c9-4043-ac8b-58a389fae2e9.nc"
+    )
+    lon_era=np.concatenate((dataset["longitude"][:]-360,dataset2["longitude"][:]))
+    sst = dataset["sst"][:]
+    sst2 = dataset2["sst"][:]
+    sst2 = sst2.data[500:1011,0,:,:]
+    sst = sst.data[500:1011,0,:,:]
+    sst = np.concatenate((sst,sst2),axis=2)
+
+else:
+    raise Exception("Specified region is not valid, try '3', '4', or '34'.")
 
 hours = dataset["time"][:].data
 lat_era = dataset["latitude"][:]
-lon_era = dataset["longitude"][:]
 
 base = date(1900, 1, 1)
 time=[]
@@ -145,18 +196,19 @@ for hour in hours:
 
 print('ERA5 data loaded')
 
-L=4
-lag=1
 
-sst = dataset["sst"][:]
-sst=sst.data[500:1011,0,:,:]
 #sst=space_filter(sst)
-era=get_anom(sst[:])
+era = get_anom(sst[:])
 #era=sst[:]
 #sst = dataset["sst"][:]
-time_era=time[500:1011]
-obj=mi_obj(noaa,era,L,lag)
-mi=obj.mutal_info()
+time_era = time[500:1011]
+obj = mi_obj(noaa,era,L,lag)
+obj.code = code
+mi = obj.mutal_info()
 
 plt.plot(time_era,mi)
-#np.savetxt('elnino_anom_R_L'+str(L)+'_lag_'+str(lag)+'.csv',mi, delimiter=",")
+
+if code == 'vertical':  
+    np.savetxt('mi_ts/elnino_anom_MI_ver_L'+str(L)+'_lag_'+str(lag)+'_region_'+region+'.csv',mi, delimiter=",")
+elif code == 'horizontal':
+    np.savetxt('mi_ts/elnino_anom_MI_hor_L'+str(L)+'_lag_'+str(lag)+'_region_'+region+'.csv',mi, delimiter=",")
