@@ -11,10 +11,10 @@ tile=tiledlayout(2,1,'TileSpacing','compact');
 tile.TileSpacing = 'compact';
 tile.Padding = 'compact';
 
-anom_sat=readmatrix('../final_ts/elnino_NOAA_monthly_anomaly.csv');
+anom_sat=readmatrix('final_ts/elnino_NOAA_monthly_anomaly.csv');
 t_sat=datetime(1981,9:length(anom_sat)+8,1);
 
-ONI=readmatrix('../ONI.csv');
+ONI=readmatrix('input_data/ONI.csv');
 t_oni=datetime(1950,1:length(ONI),1);
 
 ONI=ONI(381:891);
@@ -37,24 +37,26 @@ grid on
 grid minor
 ylabel('Temp. Anom. (ºC)')
 
-
+L = 4;
+region = '34';
 
 for lag=[1 2 4 8]
     nexttile(1);
-yyaxis left
-colororder('default')
-MI=csvread(['../elnino_anom_MI_hor_L4_lag_' num2str(lag) '.csv']);
-
-plot(t_sat,MI,'LineWidth',1), hold on
-%plot(run_ave(MI,12),'LineWidth',1), hold on
-
-set(gca,'FontSize',20,'YMinorTick','on')
-grid on
-grid minor
-set(gca, 'SortMethod', 'depth')
-nexttile(2);
-yyaxis left
-MI=csvread(['../elnino_anom_MI_ver_L4_lag_' num2str(lag) '.csv']);
+    yyaxis left
+    colororder('default')
+    MI=csvread(['mi_ts/elnino_anom_MI_hor_L' num2str(L) '_lag_' num2str(lag) '_region_' region '.csv']);
+    
+    plot(t_sat,MI,'LineWidth',1), hold on
+    %plot(run_ave(MI,12),'LineWidth',1), hold on
+    
+    set(gca,'FontSize',20,'YMinorTick','on')
+    grid on
+    grid minor
+    set(gca, 'SortMethod', 'depth')
+    nexttile(2);
+    yyaxis left
+   MI=csvread(['mi_ts/elnino_anom_MI_ver_L' num2str(L) '_lag_' num2str(lag) '_region_' region '.csv']);
+    
 
 
 %

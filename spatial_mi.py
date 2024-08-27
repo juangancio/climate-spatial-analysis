@@ -114,7 +114,7 @@ def usual_entropy(data,b):
 L=4
 lag=8
 
-region = '4' # '3' / '4' / '34'
+region = '34' # '3' / '4' / '34'
 code = 'horizontal' # 'vertical' / 'horizontal'
 
 #####################################################################################
@@ -207,8 +207,8 @@ obj.code = code
 mi = obj.mutal_info()
 
 plt.plot(time_era,mi)
-'''
+
 if code == 'vertical':  
     np.savetxt('mi_ts/elnino_anom_MI_ver_L'+str(L)+'_lag_'+str(lag)+'_region_'+region+'.csv',mi, delimiter=",")
 elif code == 'horizontal':
-    np.savetxt('mi_ts/elnino_anom_MI_hor_L'+str(L)+'_lag_'+str(lag)+'_region_'+region+'.csv',mi, delimiter=",")'''
+    np.savetxt('mi_ts/elnino_anom_MI_hor_L'+str(L)+'_lag_'+str(lag)+'_region_'+region+'.csv',mi, delimiter=",")
