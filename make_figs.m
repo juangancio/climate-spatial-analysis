@@ -13,22 +13,32 @@ t_sat=datetime(1981,9:length(anom_sat)+8,1);
 anom_std=csvread('final_ts/elnino_ERA5_monthly_std.csv');
 anom_sat_std=csvread('final_ts/elnino_NOAA_monthly_std.csv');
 
+anom_gulf=readmatrix('final_ts/gulf_ERA5_monthly_anomaly.csv');
+anom_sat_gulf=readmatrix('final_ts/gulf_NOAA_monthly_anomaly.csv');
+anom_std_gulf=csvread('final_ts/gulf_ERA5_monthly_std.csv');
+anom_sat_std_gulf=csvread('final_ts/gulf_NOAA_monthly_std.csv');
+
+
 load coastlines.mat
 figure
 
-t1 = tiledlayout(1,2,'TileSpacing','Compact','Padding', 'compact');
+t1 = tiledlayout(1,3,'TileSpacing','Compact','Padding', 'compact');
 t2 = tiledlayout(t1,'flow','TileSpacing','Compact','Padding', 'compact');
 t3 = tiledlayout(t1,'vertical','TileSpacing','Compact','Padding', 'compact');
+t4 = tiledlayout(t1,'vertical','TileSpacing','Compact','Padding', 'compact');
+
 
 t3.Layout.Tile = 2;
-
+t4.Layout.Tile = 3;
 nexttile(t2);
 plot(coastlon,coastlat,'k-','LineWidth',1)
 set(gca,'YDir','normal')
 grid on
 set(gca,'GridColor',[0 0 0],'GridLineWidth',1,'TickLabelInterpreter','latex')
-set(gca,'FontSize',18,'YLim',[-90,90],'XLim',[-180,180])
+set(gca,'FontSize',18,'YLim',[-70,70],'XLim',[-180,-20])
 hold on
+
+
 
 rectangle('Position',[-170,-5,50,10],'FaceColor',[27,158,119]./255) 
 rectangle('Position',[-67.5,32.5,22.5,10],'FaceColor',[255,127,0]./255) 
@@ -45,18 +55,41 @@ set(gca,'XLim',[t_sat(1),t_sat(end)])
 nexttile(t3), hold on
 fill([t_sat,fliplr(t_sat)],[anom_sat'-anom_sat_std',fliplr(anom_sat'+anom_sat_std')],'r','FaceAlpha',.4,'EdgeColor','none')
 plot(t_sat,anom_sat,'r','LineWidth',1)
-grid on,ylabel('SST anomaly  (K)','interpreter','latex')
+grid on,
+y=ylabel('SST anomaly  (K)','interpreter','latex','Position',[-1391 4.5000 -1.0000])
 
 set(gca,'FontSize',18,'TickLabelInterpreter','latex')
 set(gca,'XLim',[t_sat(1),t_sat(end)])
 set(gcf,'Position',[671 272 934 348])
 xlabel('years','Interpreter', 'latex')
 
-a_text=text(t_oni(1)-4000,12,'(a)','FontName','Helvetica', 'FontSize',18,'Interpreter', 'latex');
-b_text=text(t_sat(1)+550,11.5,'(b): ERA5','FontName','Helvetica', 'FontSize',18,'Interpreter', 'latex');
-c_text=text(t_sat(1)+550,3.25,'(c): NOAA OI v2','FontName','Helvetica', 'FontSize',18,'Interpreter', 'latex');
+a_text=text(t_oni(1)-5000,12.3,'(a)','FontName','Helvetica', 'FontSize',18,'Interpreter', 'latex');
+b_text=text(t_sat(1)+550,11.5,'(b): El Ni\~{n}o - ERA5','FontName','Helvetica', 'FontSize',18,'Interpreter', 'latex');
+c_text=text(t_sat(1)+550,3.25,'(c): El Ni\~{n}o - NOAA OI v2','FontName','Helvetica', 'FontSize',18,'Interpreter', 'latex');
 
-saveas(gcf,'figures/fig1','epsc')
+nexttile(t4), hold on
+
+fill([t_oni,fliplr(t_oni)],[anom_gulf'-anom_std_gulf',fliplr(anom_gulf'+anom_std_gulf')],[255,127,0]./255,'FaceAlpha',.4,'EdgeColor','none')
+plot(t_oni,anom_gulf,'LineWidth',1,'Color',[0.8500 0.3250 0.0980])
+
+grid on
+set(gca,'FontSize',18,'TickLabelInterpreter','latex','XTickLabel',{'','',''})
+set(gca,'XLim',[t_sat(1),t_sat(end)])
+%figure, hold on
+nexttile(t4), hold on
+fill([t_sat,fliplr(t_sat)],[anom_sat_gulf'-anom_sat_std_gulf',fliplr(anom_sat_gulf'+anom_sat_std_gulf')],[255,127,0]./255,'FaceAlpha',.4,'EdgeColor','none')
+plot(t_sat,anom_sat_gulf,'LineWidth',1,'Color',[0.8500 0.3250 0.0980])
+grid on,%y=ylabel('SST anomaly  (K)','interpreter','latex','Position',[-1.0583e+03 3 -1.0000])
+
+set(gca,'FontSize',18,'TickLabelInterpreter','latex')
+set(gca,'XLim',[t_sat(1),t_sat(end)])
+set(gcf,'Position',[671 272 934 348])
+xlabel('years','Interpreter', 'latex')
+b_text=text(t_sat(1)+550,8.5,'(d): Gulf Stream - ERA5','FontName','Helvetica', 'FontSize',18,'Interpreter', 'latex');
+c_text=text(t_sat(1)+200,2.25,'(e): Gulf Stream - NOAA OI v2','FontName','Helvetica', 'FontSize',18,'Interpreter', 'latex');
+
+
+%saveas(gcf,'figures/fig1','epsc')
 
 
 %% Fig 2
