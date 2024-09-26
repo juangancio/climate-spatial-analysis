@@ -4,6 +4,7 @@ clc
 
 
 %% Fig 1
+
 anom=readmatrix('final_ts/elnino_ERA5_monthly_anomaly.csv');
 t_oni=datetime(1940,1:length(anom),1);
 
