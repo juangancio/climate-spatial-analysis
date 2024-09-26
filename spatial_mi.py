@@ -114,7 +114,7 @@ def usual_entropy(data,b):
 L=4
 lag=8
 
-region = '34' # '3' / '4' / '34'
+region = '3' # '3' / '4' / '34'
 code = 'horizontal' # 'vertical' / 'horizontal'
 
 #####################################################################################
@@ -134,6 +134,8 @@ elif region == '4':
     dataset=netCDF4.Dataset(
         "input_data/oisst_v2_mean_monthly_0.12--150E_-5-5N_1981-2024_0--150E_-4.88-4.88N_1981-2024_160-209.88E_-4.88-4.88N_1981-2024.nc"
     )
+else:
+    raise Exception("Specified region is not valid, try '3', '4', or '34'.")
 
 lat_sat = dataset["lat"][:][::-1] #For some reason the data comes N-S inverted
 lon_sat = dataset["lon"][:]
