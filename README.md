@@ -5,9 +5,13 @@ Code is preprared for analysing two regions (El Nino 3.4 and Gulf Stream) from t
 
 spe_analysis.py: Loads the data, calculates the anomaly, extracts the Spatial Permutation Entropy (SPE) from the data, in the horizontal (W-E) direction and in the vertical (N-S) direction, saves these signals, and plots them.
 
-spe_utils.py: Utilities for SPE analysis.
+`spe_utils.py`: Utilities for SPE analysis.
 
-study_trend.py: Script for significance test of signals' trends.
+`study_trend.py`: Script for significance test of signals' trends.
 
-make_figs.m: Matlab scrip for figures.
+`spatial_mi.py`: Spatial Mutual Information and other linear measures for comparison between datasets
+
+`make_figs.m`: Matlab scrip for figures.
+
+`mi_significance.m`: Matlab scrip for plotting figures from `make_figs.m` outputs. It also includes some significance testing.
 
