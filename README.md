@@ -13,5 +13,5 @@ spe_analysis.py: Loads the data, calculates the anomaly, extracts the Spatial Pe
 
 `make_figs.m`: Matlab scrip for figures.
 
-`mi_significance.m`: Matlab scrip for plotting figures from `make_figs.m` outputs. It also includes some significance testing.
+`mi_significance.m`: Matlab scrip for plotting figures from `spatial_mi.py` outputs. It also includes some significance testing.
 
