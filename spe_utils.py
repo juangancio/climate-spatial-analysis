@@ -23,6 +23,53 @@ def get_anom(sst):
             month=0
     return anom
 
+def get_mean_anom(anom,lat,lon):
+    anom = np.array(anom)
+    grids = np.meshgrid(lon,lat)
+    grid_lat = np.array(grids[0]); grid_lon = np.array(grids[1]) 
+
+    areas = grid_area(grid_lat,grid_lon)
+    ave = []; std = []
+    for i in range(anom.shape[0]):
+        #ave.append(np.sum(anom[i,:,:]*areas))
+        mean = np.average(anom[i,:,:],weights=areas)
+        var = np.average((anom[i,:,:]-mean)**2, weights=areas)
+        ave.append(mean); std.append(np.sqrt(var))
+    return (np.array(ave),std)#/np.sum(areas)
+
+def earth_radius(lat,lon): #Eartch radius in meters
+    a = 6378137 # equatorial radius
+    b = 6356752 # polar radius
+    r = (((a**2*np.cos(np.radians(lat)))**2 + (b**2*np.sin(np.radians(lat)))**2) /
+        ((a*np.cos(np.radians(lat)))**2 + (b*np.sin(np.radians(lat)))**2))**(1/2)
+    return r
+
+def grid_area(lat,lon):
+
+    R = earth_radius(lat,lon) # Earth radius in meters
+
+    ## Determine grid sizes dlat and dlon: 
+    [dlat1,dlat2] = np.gradient(lat); 
+    [dlon1,dlon2] = np.gradient(lon); 
+    # We don't know if lat and lon were created by [lat,lon] = meshgrid(lat_array,lon_array) or [lon,lat] = meshgrid(lon_array,lat_array) 
+    # but we can find out: 
+    if np.array_equal(dlat1,np.zeros(lat.shape)):
+        dlat = dlat2; 
+        dlon = dlon1; 
+        if not(np.array_equal(dlon2, np.zeros(lon.shape))):
+            raise Exception('Error: lat and lon must be monotonic grids, as if created by meshgrid.') 
+    else:
+        dlat = dlat1; 
+        dlon = dlon2; 
+        if not(np.array_equal(dlon1,dlat2)) or not(np.array_equal(dlat2,np.zeros(lon.shape))) or not(np.array_equal(dlon1,np.zeros(lon.shape))):
+            raise Exception('Error: lat and lon must be monotonic grids, as if created by meshgrid.') 
+    
+    ## Calculate area based on dlat and dlon: 
+    dy = dlat*R*np.pi/180
+    dx = (dlon/180)*np.pi*R*np.cos(np.radians(lat)); 
+    return abs(dx*dy)
+
+
 def h_entropy(data,L,lag):
     
     code=[]

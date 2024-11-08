@@ -6,8 +6,9 @@ clc
 %% Plotting all times series
 
 
+
 figure, set(gcf,'Position',[643 103 774 730])
-tile=tiledlayout(2,1,'TileSpacing','compact');
+tile=tiledlayout(3,1,'TileSpacing','compact');
 tile.TileSpacing = 'compact';
 tile.Padding = 'compact';
 
@@ -20,50 +21,50 @@ t_oni=datetime(1950,1:length(ONI),1);
 ONI=ONI(381:891);
 t_oni=t_oni(381:891);
 
-nexttile(1); hold on
-yyaxis right
-plot(t_oni(1:end),ONI(1:end),'k-','LineWidth',2)%,'Color',[.5,.5,.5])
-set(gca,'FontSize',20,'YMinorTick','on')
-grid on
-grid minor
-ylabel('Temp. Anom. (ºC)')
-
-
-nexttile(2); hold on
-yyaxis right
-plot(t_oni(1:end),ONI(1:end),'k-','LineWidth',2)%,'Color',[.5,.5,.5])
-set(gca,'FontSize',20,'YMinorTick','on')
-grid on
-grid minor
-ylabel('Temp. Anom. (ºC)')
+% nexttile(1); hold on
+% yyaxis right
+% plot(t_oni(1:end),ONI(1:end),'k-','LineWidth',2)%,'Color',[.5,.5,.5])
+% set(gca,'FontSize',20,'YMinorTick','on')
+% grid on
+% grid minor
+% ylabel('Temp. Anom. (ºC)')
+% 
+% 
+% nexttile(2); hold on
+% yyaxis right
+% plot(t_oni(1:end),ONI(1:end),'k-','LineWidth',2)%,'Color',[.5,.5,.5])
+% set(gca,'FontSize',20,'YMinorTick','on')
+% grid on
+% grid minor
+% ylabel('Temp. Anom. (ºC)')
 
 L = 4;
-region = '34';
+region = 'gulf';
 
 for lag=[1 2 4 8]
     nexttile(1);
-    yyaxis left
+    %yyaxis left
     colororder('default')
     MI=csvread(['mi_ts/elnino_anom_MI_hor_L' num2str(L) '_lag_' num2str(lag) '_region_' region '.csv']);
     
-    plot(t_sat,MI,'LineWidth',1), hold on
+    plot(t_sat,MI,'LineWidth',1.5), hold on
     %plot(run_ave(MI,12),'LineWidth',1), hold on
     
-    set(gca,'FontSize',20,'YMinorTick','on')
+    set(gca,'FontSize',16,'YMinorTick','on')
     grid on
     grid minor
     set(gca, 'SortMethod', 'depth')
     nexttile(2);
-    yyaxis left
+    %yyaxis left
    MI=csvread(['mi_ts/elnino_anom_MI_ver_L' num2str(L) '_lag_' num2str(lag) '_region_' region '.csv']);
     
 
 
 %
-plot(t_sat,MI,'LineWidth',1)
+plot(t_sat,MI,'LineWidth',1.5)
 %plot(run_ave(MI,12),'LineWidth',1), 
 hold on
-set(gca,'FontSize',20,'YMinorTick','on')
+set(gca,'FontSize',16,'YMinorTick','on')
 grid on
 grid minor
 
@@ -71,29 +72,128 @@ end
 
 nexttile(1),%legend('spatial lag = 0.25º','spatial lag = 0.50º','spatial lag = 1.0º', ...
     %'spatial lag = 2.0º','sst anom.','location','northwest')
-ylabel('hor. SMI (a.u.)')
-set(gca,'YLim',[-.6,2])
-yyaxis right
-set(gca,'YLim',[-5,5])
-fill([t_sat,fliplr(t_sat)],[zeros(size(anom_sat')),-5.*ones(size(anom_sat'))],'k','FaceAlpha',.2,'EdgeColor','none', 'HandleVisibility', 'off')
+ylabel('$SMI_{WE}$','interpreter','latex')
+set(gca,'YLim',[0,2.2],'XTickLabel',{'',''},'TickLabelInterpreter','latex'); grid on; grid minor
+% yyaxis right
+% set(gca,'YLim',[-5,5])
+% fill([t_sat,fliplr(t_sat)],[zeros(size(anom_sat')),-5.*ones(size(anom_sat'))],'k','FaceAlpha',.2,'EdgeColor','none', 'HandleVisibility', 'off')
 
 %yyaxis right
 %plot(t_sat(1:end-2),anom_sat(1:end-2),'k-','LineWidth',1)
 %annotation('arrow',[.5 .7],[.5 .7],'LineWidth',1.5)
 %text(.5, .7,'lag','FontSize',20)
+legend('$\delta = 0.25^o$','$\delta = 0.50^o$','$\delta = 1.0^o$', ...
+   '$\delta = 2^o$','sst anom.','location','northoutside','Orientation','horizontal','interpreter','latex')
 
-nexttile(2),legend('spatial lag = 0.25º','spatial lag = 0.50º','spatial lag = 1.0º', ...
-   'spatial lag = 2.0º','sst anom.','location','northwest')
-yyaxis left
-ylabel('ver. SMI (a.u.)')
-set(gca,'YLim',[-.6,2])
-yyaxis right
-set(gca,'YLim',[-5,5])
-fill([t_sat,fliplr(t_sat)],[zeros(size(anom_sat')),-5.*ones(size(anom_sat'))],'k','FaceAlpha',.2,'EdgeColor','none','HandleVisibility','off')
+nexttile(2),%yyaxis left
+ylabel('$SMI_{NS}$','interpreter','latex')
+set(gca,'YLim',[0,2.2],'XTickLabel',{'',''},'TickLabelInterpreter','latex')
+grid on; grid minor
+% yyaxis right
+% set(gca,'YLim',[-5,5])
+% fill([t_sat,fliplr(t_sat)],[zeros(size(anom_sat')),-5.*ones(size(anom_sat'))],'k','FaceAlpha',.2,'EdgeColor','none','HandleVisibility','off')
 
 % text(1,2,'a)','FontSize',20)
 % text(1,2.2,'b)','FontSize',20)
 % text(1,2.3,'c)','FontSize',20)
+
+nexttile(3)
+usual = readmatrix(['mi_ts/usual_mi_region_' region '.csv']);
+plot(t_sat,usual,'LineWidth',1.5,'Color','k')
+ylabel('$SMI_{hist.}$','interpreter','latex'); xlabel('years','interpreter','latex')
+%plot(run_ave(MI,12),'LineWidth',1), 
+hold on
+set(gca,'YLim',[0,2],'FontSize',16,'YMinorTick','on','TickLabelInterpreter','latex')
+grid on; grid minor
+a_text=text(t_oni(1)-1000,7,'(a)','FontName','Helvetica', 'FontSize',16,'Interpreter', 'latex');
+b_text=text(t_oni(1)-1000,4.5,'(b)','FontName','Helvetica', 'FontSize',16,'Interpreter', 'latex');
+c_text=text(t_oni(1)-1000,2.1,'(c)','FontName','Helvetica', 'FontSize',16,'Interpreter', 'latex');
+
+
+
+a1 = annotation('arrow',[0.5678 0.6021],[0.9091 0.8069],'LineWidth',2);
+a2 = annotation('arrow',[0.5654,0.5997],[0.6250,0.5228],'LineWidth',2);
+
+
+set(gcf,'Position',[306 205 856 528])
+
+
+%% Comparisons
+
+
+
+error=readmatrix('mi_ts/error_region_34.csv');
+pears=readmatrix('mi_ts/pearson_region_34.csv');
+
+
+figure, set(gcf,'Position',[306 205 856 528]);%[600 360 745 422])
+tl=tiledlayout(4,1,'TileSpacing','compact');
+tl.TileSpacing = 'compact';
+%tl.Padding = 'compact';
+
+nexttile, hold on, grid on, box on
+plot(t_sat,error,'-','LineWidth',1.5,'Color',[55,126,184]./255)
+%plot(t_oni,ONI./4+0.5)
+set(gca,'FontSize',16,'TickLabelInterpreter','latex')
+set(gca,'GridColor',[0 0 0],'GridLineWidth',1,'XTickLabel',{'','',''})
+ylabel('$AAD(^o)$','Interpreter', 'latex')
+
+
+nexttile, hold on, grid on, box on
+plot(t_sat,pears,'-','LineWidth',1.5,'Color',[55,126,184]./255)
+%plot(t_oni,ONI./4+0.5)
+set(gca,'FontSize',16,'TickLabelInterpreter','latex')
+set(gca,'GridColor',[0 0 0],'GridLineWidth',1,'XTickLabel',{'','',''})
+%legend('ERA5','NOAA OI v2','location','southwest','Interpreter', 'latex')
+
+%xlabel('years','Interpreter', 'latex')
+ylabel('$r$','Interpreter', 'latex')
+
+a_text=text(t_oni(1)-1000,2.4,'(a)','FontName','Helvetica', 'FontSize',16,'Interpreter', 'latex');
+b_text=text(t_oni(1)-1000,1.1,'(b)','FontName','Helvetica', 'FontSize',16,'Interpreter', 'latex');
+
+
+
+
+
+error=readmatrix('mi_ts/error_region_gulf.csv');
+pears=readmatrix('mi_ts/pearson_region_gulf.csv');
+
+% figure, set(gcf,'Position',[600 360 745 422])
+% tl=tiledlayout(2,1,'TileSpacing','compact');
+% tl.TileSpacing = 'compact';
+%tl.Padding = 'compact';
+
+nexttile, hold on, grid on, box on
+plot(t_sat,error,'-','LineWidth',1.5,'Color',[55,126,184]./255)
+set(gca,'FontSize',16,'TickLabelInterpreter','latex')
+set(gca,'GridColor',[0 0 0],'GridLineWidth',1,'XTickLabel',{'','',''})
+ylabel('$AAD(^o)$','Interpreter', 'latex')
+
+nexttile, hold on, grid on, box on
+plot(t_sat,pears,'-','LineWidth',1.5,'Color',[55,126,184]./255)
+set(gca,'FontSize',16,'TickLabelInterpreter','latex')
+set(gca,'GridColor',[0 0 0],'GridLineWidth',1)
+%legend('ERA5','NOAA OI v2','location','southwest','Interpreter', 'latex','Orientation','horizontal')
+
+xlabel('years','Interpreter', 'latex')
+ylabel('$r$','Interpreter', 'latex')
+
+a_text=text(t_oni(1)-1000,2,'(c)','FontName','Helvetica', 'FontSize',16,'Interpreter', 'latex');
+b_text=text(t_oni(1)-1000,1.,'(d)','FontName','Helvetica', 'FontSize',16,'Interpreter', 'latex');
+
+
+a1 = annotation('arrow',[0.2703 0.2516],[0.9655 0.9016],'LineWidth',2);
+a2 = annotation('arrow',[0.4408,0.4221],[0.9692,0.9053],'LineWidth',2);
+a3 = annotation('arrow',[0.6803,0.6616],[0.9654,0.9015],'LineWidth',2);
+a4 = annotation('arrow',[0.4042,0.3929],[0.5075,0.5758],'LineWidth',2);
+a5 = annotation('arrow',[0.4637,0.4525],[0.5018,0.5701],'LineWidth',2);
+a6 = annotation('arrow',[0.5467,0.5354],[0.5094,0.5777],'LineWidth',2);
+
+
+
+
+
 %% Significance testing
 
 lag = 8;
@@ -227,7 +327,7 @@ years = {'1986', '1992','1994', '1997', '2002', '2004', '2006', '2009', '2015', 
     set(gca,'FontSize',18)
     set(gcf,'position',[455 420 897 334])
     xlabel('years')
-    ylabel('hor. SMI (a.u.)')
+    ylabel('hor. SMI')
 
 % Test for mean MI on nino events vs non-nino anteceding periods
 
@@ -249,7 +349,7 @@ years = {'1986', '1992','1994', '1997', '2002', '2004', '2006', '2009', '2015', 
 
 
         title(['region: ' region ', p-value (all) = ' num2str(p) ', p-value (EP) = ' num2str(p1) ', p-value (CP) = ' num2str(p2)])
-
+    grid on; box on
    end
 % figure(10),legend('ONI','El nino period selected','previous period selected','location','northoutside','orientation','horizontal')
 % set(gca,'XTickLabel',years)

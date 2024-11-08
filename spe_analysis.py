@@ -7,6 +7,7 @@ from spe_utils import (
     get_anom,
     h_entropy,
     v_entropy,
+    get_mean_anom
 )
 
 # Permutation Entropy parameters
@@ -16,7 +17,7 @@ lag=8
 # Select Dataset and Region
 
 region = 'elnino' # 'elnino' / 'gulf'
-d_set = 'NOAA' # 'ERA5' / 'NOAA'
+d_set = 'ERA5' # 'ERA5' / 'NOAA'
 
 if d_set == 'NOAA':
 
@@ -43,6 +44,9 @@ if d_set == 'NOAA':
     sst = dataset["sst"][:]
     sst = sst.data[:-remove_end,::-1,:] #NOAA dataset seems to be inverted NS, this takes dare of that
     #although this does not change the SPE values
+    lat = dataset["lat"][:][::-1] #For some reason the data comes N-S inverted
+    lon = dataset["lon"][:]
+
 elif d_set == 'ERA5':
     # Dataset parameters
     remove_end=2   #some datasets may have not valid values at the end 
@@ -72,6 +76,8 @@ elif d_set == 'ERA5':
 
     sst = dataset["sst"][:]
     sst=sst.data[:-remove_end,0,:,:]
+    lon = dataset["longitude"][:]
+    lat = dataset["latitude"][:]
 
 else:
     raise Exception("Specified dataset is not valid, try 'ERA5' or 'NOAA'.")
@@ -85,16 +91,18 @@ H_hor=[]
 H_ver=[]
 
 for i in tqdm.tqdm(range(len(anom))):
-
-    mean_anomaly.append(np.mean(anom[i,:,:]))
-    std_anomaly.append(np.std(anom[i,:,:]))
+    
+    #mean_anomaly.append(np.mean(anom[i,:,:]))
+    #std_anomaly.append(np.std(anom[i,:,:]))
     H_hor.append(h_entropy(anom[i,:,:],L,lag))
     H_ver.append(v_entropy(anom[i,:,:],L,lag))
 
+mean_anomaly,std_anomaly = get_mean_anom(anom,lat,lon)
+
 # Save data
 
-np.savetxt('final_ts/'+region+'_'+d_set+'_monthly_anomaly.csv',mean_anomaly, delimiter=",")
-np.savetxt('final_ts/'+region+'_'+d_set+'_monthly_std.csv',std_anomaly, delimiter=",")
+np.savetxt('final_ts/'+region+'_'+d_set+'_monthly_anomaly_corrected.csv',mean_anomaly, delimiter=",")
+np.savetxt('final_ts/'+region+'_'+d_set+'_monthly_std_corrected.csv',std_anomaly, delimiter=",")
 np.savetxt('final_ts/'+region+'_'+d_set+'_monthly_anom_hor_L'+str(L)+'_lag_'+str(lag)+'.csv',H_hor, delimiter=",")
 np.savetxt('final_ts/'+region+'_'+d_set+'_monthly_anom_ver_L'+str(L)+'_lag_'+str(lag)+'.csv',H_ver, delimiter=",")
 
