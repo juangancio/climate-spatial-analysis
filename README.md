@@ -3,7 +3,7 @@
 Python scripts for spatial analysis using ordinal patterns of climate data.
 Code is preprared for analysing two regions (El Nino 3.4 and Gulf Stream) from two data sets (NOAA OI v2 and ERA5 global reanalysis). But can be easily generalised for any input data.
 
-spe_analysis.py: Loads the data, calculates the anomaly, extracts the Spatial Permutation Entropy (SPE) from the data, in the horizontal (W-E) direction and in the vertical (N-S) direction, saves these signals, and plots them.
+`spe_analysis.py`: Loads the data, calculates the anomaly, extracts the Spatial Permutation Entropy (SPE) from the data, in the horizontal (W-E) direction and in the vertical (N-S) direction, saves these signals, and plots them.
 
 `spe_utils.py`: Utilities for SPE analysis.
 
@@ -13,5 +13,11 @@ spe_analysis.py: Loads the data, calculates the anomaly, extracts the Spatial Pe
 
 `make_figs.m`: Matlab script for figures.
 
-`mi_significance.m`: Matlab scrip for plotting figures from `spatial_mi.py` outputs. It also includes some significance testing.
+`mi_significance_new.m`: Matlab scrip for plotting figures from `spatial_mi.py` outputs. It also includes some significance testing.
+
+`cpa_ruptures.py`: Performs the change point detection analysis on the entropy signals.
+
+`cpa_ruptures_mi.py`: Performs the change point detection analysis on the mutual information signals.
+
+`cpa_surrogates.py`: Performs the change point detection analysis on the surrogated signals.
 
