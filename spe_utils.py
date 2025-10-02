@@ -76,7 +76,6 @@ def h_entropy(data,L,lag):
     for i in range(len(data[:,0])):
 
         code.append(perm_indices(data[i,:],L,lag))
-    
     return entropy(probabilities(np.array(code).reshape(1,np.size(code))[0],L))/np.log(math.factorial(L))
 
 def v_entropy(data,L,lag):
@@ -85,7 +84,6 @@ def v_entropy(data,L,lag):
     for i in range(len(data[0,:])):
 
         code.append(perm_indices(data[:,i],L,lag))
-    
     return entropy(probabilities(np.array(code).reshape(1,np.size(code))[0],L))/np.log(math.factorial(L))
 
 def perm_indices(ts, wl, lag):

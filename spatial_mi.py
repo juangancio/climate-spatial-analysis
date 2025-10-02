@@ -169,16 +169,17 @@ def corr_time(x):
 L=4
 lag=8
 
-region = '34' # '3' / '4' / '34' / 'gulf'
+region = 'gulf' # '3' / '4' / '34' / 'gulf'
 code = 'vertical' # 'vertical' / 'horizontal'
 
 #####################################################################################
 
 if region == '34':
     dataset=netCDF4.Dataset(
-        "input_data/final_oisst_v2_mean_monthly_-170--120E_5--5N-2.nc"
+        #"input_data/final_oisst_v2_mean_monthly_-170--120E_5--5N-2.nc"
         #"/Users/juan/Downloads/oisst_v2_mean_monthly_0.12--150E_-5-5N_1981-2024_0--150E_-4.88-4.88N_1981-2024_160-209.88E_-4.88-4.88N_1981-2024.nc"
         #"/Volumes/T7/climate_data/oisst_v2_anom_monthly_-170-120E_-5-5N_-170--120E_-5-5N.nc"
+        "input_data/NOAA_elnino.nc"
         )
 elif region == '3':
     dataset=netCDF4.Dataset(
@@ -190,7 +191,8 @@ elif region == '4':
     )
 elif region == 'gulf':
     dataset=netCDF4.Dataset(
-        "input_data/final_oisst_v2_mean_monthly_-67.5--45E_42.5-32.5N.nc"
+        #"input_data/final_oisst_v2_mean_monthly_-67.5--45E_42.5-32.5N.nc"
+        "input_data/NOAA_gulf.nc"
     )  
 else:
     raise Exception("Specified region is not valid, try '3', '4', '34', or 'gulf.")
@@ -204,21 +206,22 @@ anom=get_anom(sst[:])
 #anom = dataset["sla"][:]
 anom = anom[:,::-1,:] #For some reason the data comes N-S inverted
 noaa=anom.data[:,:,:]
-time_sat=time_sat[:511]
-noaa=noaa[:511,:,:]
+time_sat=time_sat[:526]
+noaa=noaa[:526,:,:]
 
 print('NOAA data loaded')
 
 if region == '34':
     dataset=netCDF4.Dataset(
-        "input_data/final_ERA5_mean_monthly_elnino.nc"
+        #"input_data/final_ERA5_mean_monthly_elnino.nc"
+        "input_data/ERA5_elnino.nc"
         #"/Users/juan/Downloads/adaptor.mars.internal-1724666270.488026-15195-15-b85dba3b-0e86-4e89-b008-721e5fb0829d.nc"
         #"/Volumes/T7/climate_data/adaptor.mars.internal-1716106111.9322994-1587-14-4a59a5e2-b6ae-4d38-a377-800bb134c4e8.nc"
         )
 
     lon_era = dataset["longitude"][:]
     sst = dataset["sst"][:]
-    sst=sst.data[500:1011,0,:,:]
+    sst=sst.data[500:1026,:,:]
 
 elif region == '3':
     dataset=netCDF4.Dataset(
@@ -227,7 +230,7 @@ elif region == '3':
     
     lon_era = dataset["longitude"][:]
     sst = dataset["sst"][:]
-    sst=sst.data[500:1011,0,:,:]
+    sst=sst.data[500:1026,:,:]
 
 elif region == '4':
     dataset=netCDF4.Dataset(
@@ -239,28 +242,29 @@ elif region == '4':
     lon_era=np.concatenate((dataset["longitude"][:]-360,dataset2["longitude"][:]))
     sst = dataset["sst"][:]
     sst2 = dataset2["sst"][:]
-    sst2 = sst2.data[500:1011,0,:,:]
-    sst = sst.data[500:1011,0,:,:]
+    sst2 = sst2.data[500:1026,0,:,:]
+    sst = sst.data[500:1026,0,:,:]
     sst = np.concatenate((sst,sst2),axis=2)
 
 elif region == 'gulf':
     dataset=netCDF4.Dataset(
-        "input_data/final_ERA5_mean_monthly_golfo.nc"
+        #"input_data/final_ERA5_mean_monthly_golfo.nc"
+        "input_data/ERA5_gulf.nc"
     )
     lon_era = dataset["longitude"][:]
     sst = dataset["sst"][:]
-    sst=sst.data[500:1011,0,:,:]
+    sst=sst.data[500:1026,:,:]
 
 else:
     raise Exception("Specified region is not valid, try '3', '4', '34', or 'gulf'.")
 
-hours = dataset["time"][:].data
+hours = dataset["valid_time"][:].data
 lat_era = dataset["latitude"][:]
 
-base = date(1900, 1, 1)
+base = date(1970, 1, 1)
 time=[]
 for hour in hours:
-    time.append(base + timedelta(hours=int(hour)))
+    time.append(base + timedelta(seconds=int(hour)))
 
 print('ERA5 data loaded')
 
@@ -269,7 +273,7 @@ print('ERA5 data loaded')
 era = get_anom(sst[:])
 #era=sst[:]
 #sst = dataset["sst"][:]
-time_era = time[500:1011]
+time_era = time[500:1026]
 obj = mi_obj(noaa,era,L,lag)
 obj.code = code
 mi = obj.mutal_info()
@@ -279,8 +283,9 @@ pearson_r = obj.get_pearson()
 a, b = obj.get_corr_length()
 h1, h2 = obj.get_usual_entropies()
 
-#np.savetxt('mi_ts/error_rel_region_'+region+'.csv',mi, delimiter=",")
-
+#np.savetxt('mi_ts/usual_mi_region_'+region+'.csv',mi_usual, delimiter=",")
+#np.savetxt('mi_ts/error_region_'+region+'.csv',error, delimiter=",")
+#np.savetxt('mi_ts/pearson_region_'+region+'.csv',pearson_r, delimiter=",")
 
 plt.plot(time_era,mi)
 plt.xlabel('years',size=12); plt.ylabel('SPE-based SMI (a.u.)',size=12)
@@ -322,8 +327,7 @@ plt.legend()
 #plt.savefig('corr_length_ver.png', transparent=True)
 plt.show()
 
-'''if code == 'vertical':  
-    np.savetxt('mi_ts/gulf_anom_MI_ver_L'+str(L)+'_lag_'+str(lag)+'_region_'+region+'.csv',mi, delimiter=",")
+if code == 'vertical':  
+    np.savetxt('mi_ts/elnino_anom_MI_ver_L'+str(L)+'_lag_'+str(lag)+'_region_'+region+'.csv',mi, delimiter=",")
 elif code == 'horizontal':
-    np.savetxt('mi_ts/gulf_anom_MI_hor_L'+str(L)+'_lag_'+str(lag)+'_region_'+region+'.csv',mi, delimiter=",")
-'''
+    np.savetxt('mi_ts/elnino_anom_MI_hor_L'+str(L)+'_lag_'+str(lag)+'_region_'+region+'.csv',mi, delimiter=",")
